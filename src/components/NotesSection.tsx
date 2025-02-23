@@ -1,63 +1,40 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { FileText, Download, Clock } from "lucide-react";
-import { TypeAnimation } from 'react-type-animation';
-
-interface Note {
-  id: string;
-  title: string;
-  subject: string;
-  url: string;
-  created_at: string;
-}
+import { Note, notesService } from "@/services/notesService";
 
 const NotesSection = () => {
   const [notes, setNotes] = useState<Note[]>([]);
-  const [loading, setLoading] = useState(true);
 
-  // Fetch notes from Supabase when component mounts
-  // useEffect(() => {
-  //   const fetchNotes = async () => {
-  //     const { data, error } = await supabase
-  //       .from('notes')
-  //       .select('*')
-  //       .order('created_at', { ascending: false });
-  //     
-  //     if (data) {
-  //       setNotes(data);
-  //     }
-  //     setLoading(false);
-  //   };
-  //
-  //   fetchNotes();
-  // }, []);
+  useEffect(() => {
+    setNotes(notesService.getNotes());
+  }, []);
+
+  const handleDownload = async (note: Note) => {
+    const file = await notesService.getFileById(note.id);
+    if (file) {
+      const url = URL.createObjectURL(file);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = note.fileName;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white py-20">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <div className="text-center mb-12">
-            <TypeAnimation
-              sequence={[
-                'Study Materials',
-                1000,
-                'Free Notes',
-                1000,
-                'Expert Resources',
-                1000,
-              ]}
-              wrapper="h2"
-              className="text-3xl md:text-4xl font-bold mb-4 text-red-400"
-              speed={50}
-              repeat={Infinity}
-            />
-            <p className="text-gray-400">
-              Access comprehensive notes for both Islamiyat and Pakistan Studies
-            </p>
-          </div>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-red-400">Study Materials</h2>
+          <p className="text-gray-400 text-center mb-12">
+            Access comprehensive notes for both Islamiyat and Pakistan Studies
+          </p>
 
           <Tabs defaultValue="islamiyat" className="w-full">
             <TabsList className="grid w-full grid-cols-2 mb-8 bg-gray-800">
@@ -86,35 +63,33 @@ const NotesSection = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="grid gap-4">
-                      {loading ? (
-                        <div className="text-center py-8">
-                          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-red-500 mx-auto" />
-                        </div>
-                      ) : notes.filter(note => note.subject === subject).map((note) => (
-                        <div key={note.id} 
-                          className="flex items-center justify-between p-4 rounded-lg bg-black/40 hover:bg-black/60 transition-all group"
-                        >
-                          <div className="flex items-center gap-3">
-                            <FileText className="text-red-400 h-5 w-5" />
-                            <div>
-                              <h3 className="font-medium text-white">{note.title}</h3>
-                              <p className="text-xs text-gray-400 flex items-center gap-1">
-                                <Clock className="h-3 w-3" />
-                                {new Date(note.created_at).toLocaleDateString()}
-                              </p>
-                            </div>
-                          </div>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => window.open(note.url, '_blank')}
-                            className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white group-hover:scale-105 transition-all"
+                      {notes
+                        .filter(note => note.subject === subject)
+                        .map((note) => (
+                          <div key={note.id} 
+                            className="flex items-center justify-between p-4 rounded-lg bg-black/40 hover:bg-black/60 transition-all group"
                           >
-                            <Download className="h-4 w-4 mr-2" />
-                            Download
-                          </Button>
-                        </div>
-                      ))}
+                            <div className="flex items-center gap-3">
+                              <FileText className="text-red-400 h-5 w-5" />
+                              <div>
+                                <h3 className="font-medium text-white">{note.title}</h3>
+                                <p className="text-xs text-gray-400 flex items-center gap-1">
+                                  <Clock className="h-3 w-3" />
+                                  {new Date(note.createdAt).toLocaleDateString()}
+                                </p>
+                              </div>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDownload(note)}
+                              className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white group-hover:scale-105 transition-all"
+                            >
+                              <Download className="h-4 w-4 mr-2" />
+                              Download
+                            </Button>
+                          </div>
+                        ))}
                     </div>
                   </CardContent>
                 </Card>

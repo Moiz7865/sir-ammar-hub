@@ -1,43 +1,49 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Button } from "./ui/button";
-import { Upload, Loader2 } from "lucide-react";
+import { Upload, Loader2, Trash2 } from "lucide-react";
 import { useToast } from "./ui/use-toast";
+import { Note, notesService } from "@/services/notesService";
+import { Input } from "./ui/input";
 
 const AdminDashboard = () => {
   const [uploading, setUploading] = useState(false);
+  const [notes, setNotes] = useState<Note[]>([]);
+  const [title, setTitle] = useState("");
   const { toast } = useToast();
 
-  const handleFileUpload = async (subject: string, event: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    setNotes(notesService.getNotes());
+  }, []);
+
+  const handleFileUpload = async (subject: 'islamiyat' | 'pakistan-studies', event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
+    if (!title) {
+      toast({
+        title: "Error",
+        description: "Please enter a title for the note",
+        variant: "destructive",
+      });
+      return;
+    }
     
     setUploading(true);
     try {
-      // Implement Supabase upload logic here
-      // const { data, error } = await supabase.storage
-      //   .from('notes')
-      //   .upload(`${subject}/${file.name}`, file);
-      //
-      // if (error) throw error;
-      //
-      // const { data: noteData, error: noteError } = await supabase
-      //   .from('notes')
-      //   .insert([
-      //     {
-      //       title: file.name,
-      //       subject,
-      //       url: data.path,
-      //       created_at: new Date().toISOString(),
-      //     },
-      //   ]);
+      const newNote = await notesService.saveNote({
+        title,
+        subject,
+        file,
+        fileName: file.name,
+      });
 
+      setNotes(notesService.getNotes());
+      setTitle("");
       toast({
         title: "Success!",
         description: "Note uploaded successfully",
-        variant: "default",
       });
     } catch (error) {
       toast({
@@ -48,6 +54,15 @@ const AdminDashboard = () => {
     } finally {
       setUploading(false);
     }
+  };
+
+  const handleDelete = (id: string) => {
+    notesService.deleteNote(id);
+    setNotes(notesService.getNotes());
+    toast({
+      title: "Success!",
+      description: "Note deleted successfully",
+    });
   };
 
   return (
@@ -75,7 +90,7 @@ const AdminDashboard = () => {
               </TabsTrigger>
             </TabsList>
 
-            {['islamiyat', 'pakistan-studies'].map((subject) => (
+            {(['islamiyat', 'pakistan-studies'] as const).map((subject) => (
               <TabsContent key={subject} value={subject}>
                 <Card className="glass-card border-red-500/20">
                   <CardHeader>
@@ -86,7 +101,14 @@ const AdminDashboard = () => {
                       Upload new study materials for students
                     </CardDescription>
                   </CardHeader>
-                  <CardContent>
+                  <CardContent className="space-y-6">
+                    <Input
+                      placeholder="Enter note title"
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="bg-black/40 border-red-500/20 text-white"
+                    />
+                    
                     <div className="flex items-center justify-center w-full">
                       <label className="flex flex-col items-center justify-center w-full h-64 border-2 border-dashed rounded-lg cursor-pointer bg-black/40 border-red-500/20 hover:bg-red-500/5">
                         <div className="flex flex-col items-center justify-center pt-5 pb-6">
@@ -110,6 +132,30 @@ const AdminDashboard = () => {
                           disabled={uploading}
                         />
                       </label>
+                    </div>
+
+                    <div className="mt-8 space-y-4">
+                      <h3 className="text-lg font-semibold text-red-400">Uploaded Notes</h3>
+                      {notes
+                        .filter(note => note.subject === subject)
+                        .map((note) => (
+                          <div key={note.id} 
+                            className="flex items-center justify-between p-4 rounded-lg bg-black/40"
+                          >
+                            <div className="flex items-center gap-3">
+                              <FileText className="text-red-400 h-5 w-5" />
+                              <span>{note.title}</span>
+                            </div>
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleDelete(note.id)}
+                              className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        ))}
                     </div>
                   </CardContent>
                 </Card>

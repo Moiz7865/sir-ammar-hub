@@ -1,3 +1,4 @@
+
 import { GraduationCap, Award, BookOpen } from "lucide-react";
 import { Button } from "./ui/button";
 import { TypeAnimation } from 'react-type-animation';
@@ -19,7 +20,6 @@ const Hero = () => {
           <span className="inline-block px-4 py-2 rounded-full bg-red-500/20 text-red-400 font-medium animate-fade-in">
             O-Level Education Expert
           </span>
-
 
         
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-fade-up animate-slide-in [--tw-animate-delay:200ms]">
