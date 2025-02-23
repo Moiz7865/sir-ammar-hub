@@ -21,14 +21,14 @@ const Hero = () => {
           </span>
           
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-fade-up [--tw-animate-delay:200ms]">
-            Welcome to
-            <span className="text-red-400 block animate-fade-up [--tw-animate-delay:400ms]">
-              Sir Ammar Khan's
-            </span>
-            <span className="animate-fade-up [--tw-animate-delay:600ms] block">
-              Teaching Hub
-            </span>
-          </h1>
+  Master
+  <span className="text-red-400 block animate-fade-up [--tw-animate-delay:400ms]">
+    Islamiyat & Pakistan Studies
+  </span>
+  <span className="animate-fade-up [--tw-animate-delay:600ms] block">
+    with Sir Ammar Khan
+  </span>
+</h1>
           
           <p className="text-lg text-gray-300 max-w-xl animate-fade-up [--tw-animate-delay:800ms]">
             Dedicated O-Level teacher specializing in Islamiyat and Pakistan Studies, 
