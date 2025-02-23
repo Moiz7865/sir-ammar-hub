@@ -23,16 +23,17 @@ const Hero = () => {
 
         
           <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-fade-up animate-slide-in [--tw-animate-delay:200ms]">
-  <span className="block animate-fade-up animate-slide-in [--tw-animate-delay:400ms]">
+  <span className="block animate-fade-up animate-slide-in [--tw-animate-delay:400ms] animate-pulse">
     Master
   </span>
-  <span className="text-red-400 block animate-fade-up animate-slide-in [--tw-animate-delay:600ms]">
+  <span className="text-red-400 block animate-fade-up animate-slide-in [--tw-animate-delay:600ms] animate-pulse">
     Islamiyat & Pakistan Studies
   </span>
-  <span className="block animate-fade-up animate-slide-in [--tw-animate-delay:800ms]">
+  <span className="block animate-fade-up animate-slide-in [--tw-animate-delay:800ms] animate-pulse">
     with Sir Ammar Khan
   </span>
 </h1>
+
 
           <p className="text-lg text-gray-300 max-w-xl animate-fade-up [--tw-animate-delay:800ms]">
             Dedicated O-Level teacher specializing in Islamiyat and Pakistan Studies, 
