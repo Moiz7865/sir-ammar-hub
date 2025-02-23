@@ -1,4 +1,3 @@
-
 import { GraduationCap, Award, BookOpen } from "lucide-react";
 import { Button } from "./ui/button";
 import { TypeAnimation } from 'react-type-animation';
@@ -16,26 +15,22 @@ const Hero = () => {
       <div className="overlay" />
       
       <div className="container mx-auto px-4 py-20 flex flex-col lg:flex-row items-center justify-between gap-12 relative z-10">
-        <div className="w-full lg:w-1/2 space-y-6 animate-fade-up">
+        <div className="w-full lg:w-1/2 space-y-6">
           <span className="inline-block px-4 py-2 rounded-full bg-red-500/20 text-red-400 font-medium animate-fade-in">
             O-Level Education Expert
           </span>
           
-          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight">
-            <TypeAnimation
-              sequence={[
-                'Welcome to',
-                1000,
-                'Welcome to Sir Ammar Khan\'s Teaching Hub',
-                2000,
-              ]}
-              wrapper="span"
-              speed={50}
-              repeat={Infinity}
-            />
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-fade-up [--tw-animate-delay:200ms]">
+            Welcome to
+            <span className="text-red-400 block animate-fade-up [--tw-animate-delay:400ms]">
+              Sir Ammar Khan's
+            </span>
+            <span className="animate-fade-up [--tw-animate-delay:600ms] block">
+              Teaching Hub
+            </span>
           </h1>
           
-          <p className="text-lg text-gray-300 max-w-xl">
+          <p className="text-lg text-gray-300 max-w-xl animate-fade-up [--tw-animate-delay:800ms]">
             Dedicated O-Level teacher specializing in Islamiyat and Pakistan Studies, 
             with over 8 years of experience helping students achieve excellence.
           </p>
@@ -77,9 +72,8 @@ const Hero = () => {
           </div>
         </div>
         
-        <div className="w-full lg:w-1/2 relative animate-fade-in">
+        <div className="w-full lg:w-1/2 relative animate-fade-in [--tw-animate-delay:1000ms]">
           <div className="aspect-square relative rounded-2xl overflow-hidden glass-card">
-            {/* Note: Replace this with actual image of Sir Ammar Khan */}
             <img
               src="/sir-ammar.jpg"
               alt="Sir Ammar Khan"

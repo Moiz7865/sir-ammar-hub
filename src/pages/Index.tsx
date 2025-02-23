@@ -1,12 +1,12 @@
 
 import Hero from "@/components/Hero";
-import NotesSection from "@/components/NotesSection";
+import Resume from "@/components/Resume";
 
 const Index = () => {
   return (
     <div className="min-h-screen">
       <Hero />
-      <NotesSection />
+      <Resume />
     </div>
   );
 };
