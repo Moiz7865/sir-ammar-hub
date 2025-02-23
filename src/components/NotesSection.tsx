@@ -5,25 +5,29 @@ import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
 import { FileText, Download, Clock } from "lucide-react";
 import { Note, notesService } from "@/services/notesService";
+import { useToast } from "./ui/use-toast";
 
 const NotesSection = () => {
   const [notes, setNotes] = useState<Note[]>([]);
+  const { toast } = useToast();
 
   useEffect(() => {
     setNotes(notesService.getNotes());
   }, []);
 
   const handleDownload = async (note: Note) => {
-    const file = await notesService.getFileById(note.id);
-    if (file) {
-      const url = URL.createObjectURL(file);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = note.fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
+    try {
+      await notesService.downloadNote(note);
+      toast({
+        title: "Success",
+        description: "File downloaded successfully",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to download file",
+        variant: "destructive",
+      });
     }
   };
 
