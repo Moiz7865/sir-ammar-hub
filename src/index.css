@@ -24,7 +24,7 @@
   }
 
   .glass-card {
-    @apply bg-white/80 backdrop-blur-sm border border-white/20 shadow-lg;
+    @apply bg-black/40 backdrop-blur-sm border border-white/10 shadow-lg;
   }
 
   .animate-on-scroll {
@@ -33,5 +33,13 @@
 
   .animate-on-scroll.in-view {
     @apply opacity-100 translate-y-0;
+  }
+
+  .video-background {
+    @apply fixed inset-0 w-full h-full object-cover -z-10;
+  }
+
+  .overlay {
+    @apply fixed inset-0 bg-black/60 -z-10;
   }
 }
