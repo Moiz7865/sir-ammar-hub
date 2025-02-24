@@ -13,9 +13,9 @@ export interface Note {
 const NOTES_KEY = 'teaching_hub_notes';
 
 // GitHub configuration
-const GITHUB_TOKEN = process.env.VITE_GITHUB_TOKEN;
-const REPO_OWNER = process.env.VITE_REPO_OWNER;
-const REPO_NAME = process.env.VITE_REPO_NAME;
+const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
+const REPO_OWNER = import.meta.env.VITE_REPO_OWNER;
+const REPO_NAME = import.meta.env.VITE_REPO_NAME;
 const BRANCH = 'main';
 
 const octokit = GITHUB_TOKEN ? new Octokit({ auth: GITHUB_TOKEN }) : null;
