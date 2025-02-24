@@ -20,3 +20,8 @@ export default defineConfig(({ mode }) => ({
     },
   },
 }));
+export default defineConfig({
+  base: '/sir-ammar-hub/',
+  // ... other config
+})
+
