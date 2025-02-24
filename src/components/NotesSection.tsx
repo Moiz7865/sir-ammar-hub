@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "./ui/card";
 import { Button } from "./ui/button";
-import { FileText, Download, Clock } from "lucide-react";
+import { FileText, Eye, Clock } from "lucide-react";
 import { Note, notesService } from "@/services/notesService";
 import { useToast } from "./ui/use-toast";
 
@@ -15,27 +15,15 @@ const NotesSection = () => {
     setNotes(notesService.getNotes());
   }, []);
 
-  const handleDownload = async (note: Note) => {
-    try {
-      await notesService.downloadNote(note);
-      toast({
-        title: "Success",
-        description: "File downloaded successfully",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to download file",
-        variant: "destructive",
-      });
-    }
+  const handleView = (note: Note) => {
+    notesService.viewNote(note);
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white py-20">
+    <div className="min-h-screen bg-gradient-to-b from-red-950 to-black text-white">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-red-400">Study Materials</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-red-400 pt-8">Study Materials</h2>
           <p className="text-gray-400 text-center mb-12">
             Access comprehensive notes for both Islamiyat and Pakistan Studies
           </p>
@@ -86,11 +74,11 @@ const NotesSection = () => {
                             <Button
                               variant="outline"
                               size="sm"
-                              onClick={() => handleDownload(note)}
+                              onClick={() => handleView(note)}
                               className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white group-hover:scale-105 transition-all"
                             >
-                              <Download className="h-4 w-4 mr-2" />
-                              Download
+                              <Eye className="h-4 w-4 mr-2" />
+                              View
                             </Button>
                           </div>
                         ))}

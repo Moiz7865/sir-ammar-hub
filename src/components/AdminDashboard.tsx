@@ -39,6 +39,16 @@ const AdminDashboard = () => {
         fileName: file.name,
       });
 
+      // Move the file to public/notes folder
+      // Note: In a real application, you would need a server-side solution
+      // This is just for demonstration purposes
+      const reader = new FileReader();
+      reader.onload = async () => {
+        // In a real app, you would upload this to a server
+        console.log(`File would be saved to: /public/notes/${subject}/${file.name}`);
+      };
+      reader.readAsArrayBuffer(file);
+
       setNotes(notesService.getNotes());
       setTitle("");
       toast({
@@ -66,10 +76,10 @@ const AdminDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-black to-gray-900 text-white py-20">
+    <div className="min-h-screen bg-gradient-to-b from-red-950 to-black text-white">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-red-400">Admin Dashboard</h2>
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-red-400 pt-8">Admin Dashboard</h2>
           <p className="text-gray-400 text-center mb-12">
             Manage and upload study materials for your students
           </p>
