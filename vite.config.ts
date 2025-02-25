@@ -4,9 +4,9 @@ import react from "@vitejs/plugin-react-swc";
 import path from "path";
 import { componentTagger } from "lovable-tagger";
 
-// https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: './',  // Changed from '/sir-ammar-hub/' to './' to handle both local and deployed paths
+  // Remove the dot from base to ensure proper path resolution
+  base: '/',  
   server: {
     host: "::",
     port: 8080,
