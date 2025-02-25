@@ -1,27 +1,18 @@
 
 # Welcome to your Lovable project
 
-## Complete Setup Guide
+## Deployment Guide (Direct dist upload)
 
-### 1. GitHub Repository & Storage Setup
+### 1. GitHub Storage Setup
 
 #### 1.1. Create a GitHub Repository
 1. Go to [GitHub](https://github.com) and sign in
-2. Click the "+" icon in the top-right corner and select "New repository"
-3. Name your repository (e.g., "sir-ammar-hub")
-4. Make it public
-5. Check "Add a README file"
-6. Click "Create repository"
+2. Create a new repository (e.g., "sir-ammar-hub")
+3. Make it public
+4. Check "Add a README file"
+5. Click "Create repository"
 
-#### 1.2. Enable GitHub Pages
-1. Go to your repository settings
-2. Navigate to "Pages" in the left sidebar
-3. Under "Source", select "Deploy from a branch"
-4. Select "main" branch and "/(root)" folder
-5. Click "Save"
-6. Wait a few minutes for GitHub Pages to activate
-
-#### 1.3. Create Required Folders
+#### 1.2. Create Required Folders
 1. In your repository, create these folders:
    ```
    public/
@@ -35,101 +26,75 @@
    - Click "Commit new file"
    - Repeat for `public/notes/pakistan-studies/.gitkeep`
 
-#### 1.4. Generate GitHub Token
-1. Go to GitHub Settings (click profile picture → Settings)
-2. Scroll to "Developer settings" (bottom of left sidebar)
-3. Click "Personal access tokens" → "Tokens (classic)"
-4. Click "Generate new token (classic)"
-5. Configure token:
+#### 1.3. Generate GitHub Token
+1. Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)
+2. Click "Generate new token (classic)"
+3. Configure:
    - Note: "Teaching Hub Access"
-   - Expiration: Choose as needed
-   - Permissions:
+   - Select permissions:
      - ✓ `repo` (Full control of repositories)
      - ✓ `workflow` (Update GitHub Action workflows)
    - Click "Generate token"
-6. **IMPORTANT**: Copy your token immediately! You won't see it again
+4. **IMPORTANT**: Copy your token immediately!
 
-### 2. Environment Setup
+### 2. Local Build Setup
 
-#### 2.1. Environment Variables
-Create a `.env` file in your project root:
+1. Clone and set up the project:
+```sh
+# Clone repository
+git clone <YOUR_REPO_URL>
+cd <PROJECT_NAME>
+
+# Install dependencies
+npm install
+```
+
+2. Create `.env` file:
 ```env
 VITE_GITHUB_TOKEN=your_token_here
 VITE_REPO_OWNER=your_github_username
 VITE_REPO_NAME=your_repo_name
 ```
 
-Replace with your values:
-- `your_token_here`: The personal access token from step 1.4
-- `your_github_username`: Your GitHub username
-- `your_repo_name`: Your repository name
+3. Build the project:
+```sh
+npm run build
+```
+This will create a `dist` folder with your built application.
 
-### 3. Cloudflare Pages Deployment
+### 3. Cloudflare Pages Deployment (Direct Upload)
 
-#### 3.1. Connect to Cloudflare
-1. Sign up/login at [Cloudflare](https://cloudflare.com)
-2. Go to "Pages" in the dashboard
+#### 3.1. Deploy dist folder
+1. Go to [Cloudflare Dashboard](https://dash.cloudflare.com)
+2. Click "Pages"
 3. Click "Create a project"
-4. Choose "Connect to Git"
-5. Select your repository
+4. Choose "Direct Upload"
+5. Drag and drop your local `dist` folder
+6. Click "Deploy site"
 
-#### 3.2. Configure Build Settings
-- Build command: `npm run build`
-- Build output directory: `dist`
-- Node.js version: 18
-
-#### 3.3. Environment Variables
-1. In Cloudflare Pages project settings
-2. Go to "Environment variables"
+#### 3.2. Add Environment Variables
+1. After deployment, go to your project settings
+2. Find "Environment variables"
 3. Add these variables:
    ```
    VITE_GITHUB_TOKEN=your_token_here
    VITE_REPO_OWNER=your_github_username
    VITE_REPO_NAME=your_repo_name
    ```
+4. Click "Save"
+5. Trigger a new deployment for the changes to take effect
 
-### 4. How File Storage Works
+### How File Storage Works
 
-#### 4.1. File Upload Process
-1. When a note is uploaded:
-   - File is converted to base64
-   - Uploaded to GitHub repository using Octokit
-   - Stored in `public/notes/{subject}/` directory
-   - File metadata saved in localStorage
+#### File Management
+- Files are stored in your GitHub repository
+- Files are uploaded through admin dashboard to `public/notes/{subject}/`
+- File metadata is saved in localStorage
+- Files are served through GitHub's raw content URLs
 
-#### 4.2. File Access
-1. Files are served through GitHub Pages
-2. URL format: `https://{username}.github.io/{repo-name}/notes/{subject}/{filename}`
-3. File metadata stored locally includes:
-   - ID
-   - Title
-   - Subject
-   - File name
-   - File path
-   - Creation date
-
-#### 4.3. File Management
-- **Upload**: Files uploaded through admin dashboard
-- **Delete**: Removes file from GitHub and updates local metadata
-- **View**: Opens file in new tab using GitHub Pages URL
-
-### 5. Local Development
-
+### Local Development
+To run the project locally:
 ```sh
-# Clone repository
-git clone <YOUR_REPO_URL>
-
-# Navigate to project
-cd <PROJECT_NAME>
-
-# Install dependencies
-npm install
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your values
-
-# Start development server
 npm run dev
 ```
 
@@ -141,6 +106,5 @@ npm run dev
 - Vite + React + TypeScript
 - shadcn-ui + Tailwind CSS
 - Octokit (GitHub API client)
-- GitHub Pages (file storage)
+- GitHub (file storage)
 - Cloudflare Pages (hosting)
-
