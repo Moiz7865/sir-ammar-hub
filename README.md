@@ -1,3 +1,4 @@
+
 # Welcome to your Lovable project
 
 ## GitHub API Integration Guide
@@ -35,113 +36,38 @@ VITE_REPO_NAME=your_repo_name
    - `your_github_username`: Your GitHub username
    - `your_repo_name`: The name of the repository you created
 
-### 4. Setting up GitHub Pages Deployment
-1. Go to your repository settings
-2. Scroll to "Pages" section in the left sidebar
-3. Under "Build and deployment":
-   - Source: "GitHub Actions"
-   - Branch: "main"
+### 4. Deploying to Cloudflare Pages
 
-### 5. Create GitHub Actions Workflow
-1. In your repository, create `.github/workflows/deploy.yml`:
-```yaml
-name: Deploy to GitHub Pages
+1. **Sign up for Cloudflare**
+   - Go to [Cloudflare](https://cloudflare.com)
+   - Create an account or sign in
 
-on:
-  push:
-    branches: [ main ]
-  workflow_dispatch:
+2. **Connect your GitHub repository**
+   - Go to Cloudflare Dashboard
+   - Click on "Pages"
+   - Click "Create a project"
+   - Choose "Connect to Git"
+   - Select your repository
 
-permissions:
-  contents: read
-  pages: write
-  id-token: write
+3. **Configure your build settings**
+   - Build command: `npm run build`
+   - Build output directory: `dist`
+   - Node.js version: 18 (or your preferred version)
 
-jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 18
-      - name: Install dependencies
-        run: npm install
-      - name: Build
-        run: npm run build
-      - name: Setup Pages
-        uses: actions/configure-pages@v3
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v2
-        with:
-          path: './dist'
+4. **Add Environment Variables**
+   - In your Cloudflare Pages project settings
+   - Go to "Environment variables"
+   - Add the same variables from your `.env` file:
+     ```
+     VITE_GITHUB_TOKEN
+     VITE_REPO_OWNER
+     VITE_REPO_NAME
+     ```
 
-  deploy:
-    environment:
-      name: github-pages
-      url: ${{ steps.deployment.outputs.page_url }}
-    runs-on: ubuntu-latest
-    needs: build
-    steps:
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v2
-```
-
-### 6. Configure Vite for GitHub Pages
-Update your `vite.config.ts`:
-```typescript
-export default defineConfig({
-  base: '/your-repo-name/',
-  // ... other config
-})
-```
-Replace `your-repo-name` with your actual repository name.
-
-### 7. How the API Integration Works
-
-The project uses the `@octokit/rest` package to interact with GitHub's API. Here's how different operations work:
-
-#### File Upload Process:
-1. When a note is uploaded through the admin panel:
-   - File is converted to base64
-   - Uploaded to GitHub repository using `octokit.repos.createOrUpdateFileContents`
-   - Stored in `public/notes/{subject}/{filename}`
-   - File info is saved in localStorage
-
-#### File Deletion Process:
-1. When a note is deleted:
-   - Gets file's SHA from GitHub
-   - Deletes file using `octokit.repos.deleteFile`
-   - Removes entry from localStorage
-
-#### Viewing Files:
-- Files are served through GitHub Pages
-- Accessible at: `https://{username}.github.io/{repo-name}/notes/{subject}/{filename}`
-
-### 8. Troubleshooting
-
-Common issues and solutions:
-
-1. **"GitHub token not configured" error**
-   - Check if your `.env` file exists
-   - Verify token is correctly copied
-   - Make sure environment variables start with `VITE_`
-
-2. **File upload fails**
-   - Check token permissions
-   - Ensure file size is under GitHub's limit (100MB)
-   - Verify repository name and owner are correct
-
-3. **Files not appearing on GitHub Pages**
-   - Wait a few minutes for deployment
-   - Check GitHub Actions tab for build status
-   - Verify the correct branch is being deployed
-
-4. **API Rate Limiting**
-   - GitHub API has rate limits
-   - Authenticated requests get higher limits
-   - Check remaining rate limit in GitHub API response headers
+5. **Deploy**
+   - Cloudflare will automatically build and deploy your site
+   - It will provide you with a `.pages.dev` URL
+   - You can add a custom domain in the Pages settings
 
 ### Project Information
 
@@ -188,34 +114,3 @@ npm i
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with .
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/7571d6e1-f17b-45d3-9eea-cb5c3663a6e0) and click on Share -> Publish.
-
-## I want to use a custom domain - is that possible?
-
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
