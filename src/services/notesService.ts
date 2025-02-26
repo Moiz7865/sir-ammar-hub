@@ -20,6 +20,11 @@ const BRANCH = 'main';
 
 const octokit = GITHUB_TOKEN ? new Octokit({ auth: GITHUB_TOKEN }) : null;
 
+// Helper function to get raw content URL
+const getRawContentUrl = (filePath: string) => {
+  return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}${filePath}`;
+};
+
 export const notesService = {
   getNotes: (): Note[] => {
     const notes = localStorage.getItem(NOTES_KEY);
@@ -141,8 +146,9 @@ export const notesService = {
   },
 
   viewNote: (note: Note) => {
-    // Construct the GitHub Pages URL for the file
-    const githubPagesUrl = `https://${REPO_OWNER}.github.io/${REPO_NAME}${note.filePath}`;
-    window.open(githubPagesUrl, '_blank');
+    // Use raw content URL for PDF viewing
+    const pdfUrl = getRawContentUrl(note.filePath);
+    // Open in new tab with our PDF viewer
+    window.open(`/view-note?url=${encodeURIComponent(pdfUrl)}`, '_blank');
   },
 };
