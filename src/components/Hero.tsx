@@ -10,53 +10,64 @@ const Hero = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden bg-gradient-to-b from-black via-red-950/40 to-black">
-      {/* Background overlay */}
-      <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center opacity-20" />
-      
-      <div className="container mx-auto px-4 py-8">
-        {/* Top section with image and title */}
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
+    <div className="relative min-h-screen overflow-hidden">
+      {/* Video Background */}
+      <div className="absolute inset-0 z-0">
+        <video
+          autoPlay
+          loop
+          muted
+          playsInline
+          className="w-full h-full object-cover"
         >
+          <source src="/books-bg.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
+      </div>
+
+      {/* Content */}
+      <div className="relative z-10 container mx-auto px-4 py-16 min-h-screen flex flex-col justify-center">
+        <div className="grid md:grid-cols-2 gap-8 items-center">
+          {/* Left Side - Image */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.5 }}
-            className="relative w-48 h-48 md:w-56 md:h-56 mx-auto mb-8"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="order-2 md:order-1"
           >
-            <div className="absolute inset-0 bg-gradient-to-br from-red-600 to-red-900 rounded-full blur-xl opacity-50" />
-            <img
-              src="/sir-ammar.jpg"
-              alt="Sir Ammar Khan"
-              className="relative w-full h-full object-cover rounded-full border-4 border-red-700/50"
-            />
+            <div className="relative">
+              <div className="absolute -inset-4 bg-red-600/20 rounded-full blur-2xl" />
+              <img
+                src="/sir-ammar.jpg"
+                alt="Sir Ammar Khan"
+                className="relative rounded-2xl w-full max-w-md mx-auto shadow-2xl border-2 border-red-500/20"
+              />
+            </div>
           </motion.div>
 
-          <div className="space-y-4">
+          {/* Right Side - Content */}
+          <motion.div
+            initial={{ opacity: 0, x: 50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.6 }}
+            className="order-1 md:order-2 text-center md:text-left space-y-6"
+          >
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="inline-block rounded-full bg-gradient-to-r from-red-800 to-red-600 p-[2px]"
+              transition={{ delay: 0.3 }}
+              className="inline-block rounded-full px-4 py-1 bg-red-500/10 border border-red-500/20 text-red-300"
             >
-              <div className="rounded-full bg-black/90 px-6 py-2">
-                <span className="text-red-100">O-Level Education Expert</span>
-              </div>
+              O-Level Education Expert
             </motion.div>
 
             <motion.h1
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="text-5xl md:text-7xl font-bold"
+              transition={{ delay: 0.4 }}
+              className="text-4xl md:text-6xl font-bold leading-tight"
             >
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-red-200 to-red-100">
-                Master Your Future with
-              </span>
+              Transform Your 
               <br />
               <TypeAnimation
                 sequence={[
@@ -67,53 +78,54 @@ const Hero = () => {
                 ]}
                 wrapper="span"
                 speed={50}
-                className="text-transparent bg-clip-text bg-gradient-to-r from-red-500 to-red-300"
+                className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600"
                 repeat={Infinity}
               />
+              <br />
+              Journey
             </motion.h1>
 
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-xl text-red-200/70 max-w-2xl mx-auto"
+              transition={{ delay: 0.5 }}
+              className="text-lg text-gray-300 max-w-xl"
             >
-              Join Sir Ammar Khan's comprehensive O-Level program and excel in your studies 
-              with personalized attention and proven teaching methods.
+              Experience comprehensive O-Level education with personalized guidance 
+              and proven success strategies.
             </motion.p>
-          </div>
-        </motion.div>
 
-        {/* Action buttons */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.6 }}
+              className="flex flex-wrap gap-4 justify-center md:justify-start pt-4"
+            >
+              <Button
+                size="lg"
+                onClick={handleEnroll}
+                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-8"
+              >
+                Start Learning <ArrowRight className="ml-2" />
+              </Button>
+              <Button
+                size="lg"
+                variant="outline"
+                onClick={() => window.location.href = '/notes'}
+                className="border-red-500/30 text-red-300 hover:bg-red-950/30"
+              >
+                View Notes
+              </Button>
+            </motion.div>
+          </motion.div>
+        </div>
+
+        {/* Features */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.5 }}
-          className="flex flex-wrap gap-6 justify-center mb-16"
-        >
-          <Button
-            size="lg"
-            onClick={handleEnroll}
-            className="bg-gradient-to-r from-red-700 to-red-600 hover:from-red-800 hover:to-red-700 text-white text-lg px-8 py-6 shadow-lg shadow-red-900/25"
-          >
-            Start Learning Now <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
-          <Button
-            size="lg"
-            variant="outline"
-            onClick={() => window.location.href = '/notes'}
-            className="border-red-700/30 text-red-300 hover:bg-red-950/30 text-lg px-8 py-6"
-          >
-            View Study Notes
-          </Button>
-        </motion.div>
-
-        {/* Features grid */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto"
+          transition={{ delay: 0.7 }}
+          className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16"
         >
           {[
             {
@@ -136,14 +148,13 @@ const Hero = () => {
               key={i}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.7 + (i * 0.1) }}
-              className="relative group"
+              transition={{ delay: 0.8 + (i * 0.1) }}
+              className="group"
             >
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-red-700 to-red-600 rounded-xl blur opacity-50 group-hover:opacity-75 transition duration-1000" />
-              <div className="relative px-6 py-8 bg-black/60 backdrop-blur-sm rounded-xl border border-red-900/50">
-                <feature.icon className="h-10 w-10 text-red-400 mx-auto mb-4" />
-                <h3 className="text-xl font-semibold text-red-100 mb-2">{feature.title}</h3>
-                <p className="text-red-300/80">{feature.desc}</p>
+              <div className="relative p-6 bg-black/40 backdrop-blur border border-red-500/10 rounded-xl hover:bg-red-950/20 transition duration-300">
+                <feature.icon className="h-8 w-8 text-red-400 mb-4" />
+                <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
+                <p className="text-gray-400">{feature.desc}</p>
               </div>
             </motion.div>
           ))}
