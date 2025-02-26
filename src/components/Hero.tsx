@@ -15,9 +15,19 @@ const Hero = () => {
       <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]" />
       
       <div className="container mx-auto px-4 py-12 md:py-24">
-        <div className="grid md:grid-cols-2 gap-12 items-center">
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+          className="grid md:grid-cols-2 gap-12 items-center"
+        >
           {/* Left column - Text content */}
-          <div className="space-y-6 text-center md:text-left">
+          <motion.div 
+            initial={{ opacity: 0, x: -20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            className="space-y-6 text-center md:text-left"
+          >
             <div className="inline-block rounded-full bg-gradient-to-r from-pink-500 to-violet-500 p-[2px] mb-6">
               <div className="rounded-full bg-black/90 px-4 py-1">
                 <span className="text-sm text-gray-100">O-Level Education Expert</span>
@@ -67,7 +77,12 @@ const Hero = () => {
             </div>
 
             {/* Stats/Features Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12">
+            <motion.div 
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+              className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-12"
+            >
               {[
                 {
                   icon: GraduationCap,
@@ -85,8 +100,11 @@ const Hero = () => {
                   desc: "Comprehensive material"
                 }
               ].map((feature, i) => (
-                <div 
+                <motion.div 
                   key={i}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.5, delay: 0.2 * i }}
                   className="relative group"
                 >
                   <div className="absolute -inset-0.5 bg-gradient-to-r from-pink-600 to-purple-600 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000"></div>
@@ -95,13 +113,18 @@ const Hero = () => {
                     <h3 className="font-semibold text-gray-100">{feature.title}</h3>
                     <p className="text-sm text-gray-400">{feature.desc}</p>
                   </div>
-                </div>
+                </motion.div>
               ))}
-            </div>
-          </div>
+            </motion.div>
+          </motion.div>
 
           {/* Right column - Image */}
-          <div className="relative group">
+          <motion.div 
+            initial={{ opacity: 0, x: 20 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+            className="relative group"
+          >
             <div className="absolute -inset-1 bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg blur opacity-25 group-hover:opacity-75 transition duration-1000"></div>
             <div className="relative aspect-square rounded-lg overflow-hidden bg-gray-900">
               <div className="absolute inset-0 bg-gradient-to-tr from-black/40 to-transparent z-10" />
@@ -111,8 +134,8 @@ const Hero = () => {
                 className="w-full h-full object-cover object-center transform group-hover:scale-105 transition-transform duration-500"
               />
             </div>
-          </div>
-        </div>
+          </motion.div>
+        </motion.div>
       </div>
     </div>
   );
