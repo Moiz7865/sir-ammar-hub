@@ -29,7 +29,11 @@ export const notesService = {
   saveNote: async (note: Omit<Note, 'id' | 'createdAt' | 'filePath'> & { file: File }) => {
     try {
       if (!octokit) {
-        throw new Error('GitHub token not configured');
+        throw new Error('GitHub token not configured. Please check your environment variables.');
+      }
+
+      if (!REPO_OWNER || !REPO_NAME) {
+        throw new Error('GitHub repository details not configured. Please check your environment variables.');
       }
 
       const notes = notesService.getNotes();
@@ -43,8 +47,8 @@ export const notesService = {
 
       // Upload file to GitHub
       await octokit.repos.createOrUpdateFileContents({
-        owner: REPO_OWNER!,
-        repo: REPO_NAME!,
+        owner: REPO_OWNER,
+        repo: REPO_NAME,
         path: filePath,
         message: `Add note: ${note.title}`,
         content: base64Content,
@@ -61,26 +65,42 @@ export const notesService = {
       notes.push(newNote);
       localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
       return newNote;
-    } catch (error) {
-      console.error('Error saving note:', error);
-      throw error;
+    } catch (error: any) {
+      console.error('Detailed error:', error);
+      if (error.status === 404) {
+        throw new Error('Repository not found. Please check your repository settings.');
+      } else if (error.status === 401) {
+        throw new Error('Authentication failed. Please check your GitHub token.');
+      } else if (error.message) {
+        throw new Error(`GitHub Error: ${error.message}`);
+      } else {
+        throw new Error('Failed to upload note to GitHub. Please try again.');
+      }
     }
   },
 
   deleteNote: async (id: string) => {
     try {
       if (!octokit) {
-        throw new Error('GitHub token not configured');
+        throw new Error('GitHub token not configured. Please check your environment variables.');
+      }
+
+      if (!REPO_OWNER || !REPO_NAME) {
+        throw new Error('GitHub repository details not configured. Please check your environment variables.');
       }
 
       const notes = notesService.getNotes();
       const noteToDelete = notes.find(note => note.id === id);
 
-      if (noteToDelete) {
+      if (!noteToDelete) {
+        throw new Error('Note not found.');
+      }
+
+      try {
         // Get the current file's SHA
         const { data: fileData } = await octokit.repos.getContent({
-          owner: REPO_OWNER!,
-          repo: REPO_NAME!,
+          owner: REPO_OWNER,
+          repo: REPO_NAME,
           path: noteToDelete.filePath.substring(1), // Remove leading slash
           ref: BRANCH,
         });
@@ -88,21 +108,35 @@ export const notesService = {
         if ('sha' in fileData) {
           // Delete file from GitHub
           await octokit.repos.deleteFile({
-            owner: REPO_OWNER!,
-            repo: REPO_NAME!,
+            owner: REPO_OWNER,
+            repo: REPO_NAME,
             path: noteToDelete.filePath.substring(1),
             message: `Delete note: ${noteToDelete.title}`,
             sha: fileData.sha,
             branch: BRANCH,
           });
         }
+      } catch (error: any) {
+        if (error.status === 404) {
+          console.warn('File not found in repository, proceeding with local deletion');
+        } else {
+          throw error;
+        }
       }
 
       const updatedNotes = notes.filter(note => note.id !== id);
       localStorage.setItem(NOTES_KEY, JSON.stringify(updatedNotes));
-    } catch (error) {
-      console.error('Error deleting note:', error);
-      throw error;
+    } catch (error: any) {
+      console.error('Delete error:', error);
+      if (error.status === 404) {
+        throw new Error('Repository or file not found. Please check your repository settings.');
+      } else if (error.status === 401) {
+        throw new Error('Authentication failed. Please check your GitHub token.');
+      } else if (error.message) {
+        throw new Error(`GitHub Error: ${error.message}`);
+      } else {
+        throw new Error('Failed to delete note from GitHub. Please try again.');
+      }
     }
   },
 

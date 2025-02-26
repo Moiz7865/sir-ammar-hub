@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
@@ -26,6 +25,7 @@ const AdminDashboard = () => {
         title: "Error",
         description: "Please enter a title for the note",
         variant: "destructive",
+        className: "bg-red-950 border-red-500 text-white",
       });
       return;
     }
@@ -39,40 +39,46 @@ const AdminDashboard = () => {
         fileName: file.name,
       });
 
-      // Move the file to public/notes folder
-      // Note: In a real application, you would need a server-side solution
-      // This is just for demonstration purposes
-      const reader = new FileReader();
-      reader.onload = async () => {
-        // In a real app, you would upload this to a server
-        console.log(`File would be saved to: /public/notes/${subject}/${file.name}`);
-      };
-      reader.readAsArrayBuffer(file);
-
       setNotes(notesService.getNotes());
       setTitle("");
       toast({
         title: "Success!",
         description: "Note uploaded successfully",
+        className: "bg-green-950 border-green-500 text-white",
       });
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      console.error('Upload error:', error);
       toast({
-        title: "Error",
-        description: "Failed to upload note",
+        title: "Error uploading note",
+        description: errorMessage,
         variant: "destructive",
+        className: "bg-red-950 border-red-500 text-white",
       });
     } finally {
       setUploading(false);
     }
   };
 
-  const handleDelete = (id: string) => {
-    notesService.deleteNote(id);
-    setNotes(notesService.getNotes());
-    toast({
-      title: "Success!",
-      description: "Note deleted successfully",
-    });
+  const handleDelete = async (id: string) => {
+    try {
+      await notesService.deleteNote(id);
+      setNotes(notesService.getNotes());
+      toast({
+        title: "Success!",
+        description: "Note deleted successfully",
+        className: "bg-green-950 border-green-500 text-white",
+      });
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'An unknown error occurred';
+      console.error('Delete error:', error);
+      toast({
+        title: "Error deleting note",
+        description: errorMessage,
+        variant: "destructive",
+        className: "bg-red-950 border-red-500 text-white",
+      });
+    }
   };
 
   return (
