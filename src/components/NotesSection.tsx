@@ -12,8 +12,23 @@ const NotesSection = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    setNotes(notesService.getNotes());
-  }, []);
+    const fetchNotes = async () => {
+      try {
+        const fetchedNotes = await notesService.getNotes();
+        setNotes(fetchedNotes);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch notes';
+        toast({
+          title: "Error",
+          description: errorMessage,
+          variant: "destructive",
+          className: "bg-red-950 border-red-500 text-white",
+        });
+      }
+    };
+
+    fetchNotes();
+  }, [toast]);
 
   const handleView = (note: Note) => {
     notesService.viewNote(note);

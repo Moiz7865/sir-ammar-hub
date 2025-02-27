@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "./ui/tabs";
@@ -14,8 +15,23 @@ const AdminDashboard = () => {
   const { toast } = useToast();
 
   useEffect(() => {
-    setNotes(notesService.getNotes());
-  }, []);
+    const fetchNotes = async () => {
+      try {
+        const fetchedNotes = await notesService.getNotes();
+        setNotes(fetchedNotes);
+      } catch (error) {
+        const errorMessage = error instanceof Error ? error.message : 'Failed to fetch notes';
+        toast({
+          title: "Error",
+          description: errorMessage,
+          variant: "destructive",
+          className: "bg-red-950 border-red-500 text-white",
+        });
+      }
+    };
+
+    fetchNotes();
+  }, [toast]);
 
   const handleFileUpload = async (subject: 'islamiyat' | 'pakistan-studies', event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
@@ -32,14 +48,15 @@ const AdminDashboard = () => {
     
     setUploading(true);
     try {
-      const newNote = await notesService.saveNote({
+      await notesService.saveNote({
         title,
         subject,
         file,
         fileName: file.name,
       });
 
-      setNotes(notesService.getNotes());
+      const updatedNotes = await notesService.getNotes();
+      setNotes(updatedNotes);
       setTitle("");
       toast({
         title: "Success!",
@@ -63,7 +80,8 @@ const AdminDashboard = () => {
   const handleDelete = async (id: string) => {
     try {
       await notesService.deleteNote(id);
-      setNotes(notesService.getNotes());
+      const updatedNotes = await notesService.getNotes();
+      setNotes(updatedNotes);
       toast({
         title: "Success!",
         description: "Note deleted successfully",
