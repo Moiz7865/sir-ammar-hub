@@ -38,8 +38,10 @@ const NotesSection = () => {
     <div className="min-h-screen bg-gradient-to-b from-red-950 to-black text-white">
       <div className="container mx-auto px-4">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-red-400 pt-8">Study Materials</h2>
-          <p className="text-gray-400 text-center mb-12">
+          <h2 className="text-3xl md:text-4xl font-bold text-center mb-4 text-red-400 pt-8 animate-fade-in">
+            Study Materials
+          </h2>
+          <p className="text-gray-400 text-center mb-12 animate-fade-in [--tw-animate-delay:200ms]">
             Access comprehensive notes for both Islamiyat and Pakistan Studies
           </p>
 
@@ -73,13 +75,16 @@ const NotesSection = () => {
                       {notes
                         .filter(note => note.subject === subject)
                         .map((note) => (
-                          <div key={note.id} 
-                            className="flex items-center justify-between p-4 rounded-lg bg-black/40 hover:bg-black/60 transition-all group"
+                          <div 
+                            key={note.id} 
+                            className="flex items-center justify-between p-4 rounded-lg bg-black/40 hover:bg-black/60 transition-all duration-300 transform hover:scale-[1.02] hover:shadow-lg hover:shadow-red-500/20 group animate-fade-up"
                           >
                             <div className="flex items-center gap-3">
-                              <FileText className="text-red-400 h-5 w-5" />
+                              <FileText className="text-red-400 h-5 w-5 group-hover:rotate-6 transition-transform duration-300" />
                               <div>
-                                <h3 className="font-medium text-white">{note.title}</h3>
+                                <h3 className="font-medium text-white group-hover:text-red-400 transition-colors">
+                                  {note.title}
+                                </h3>
                                 <p className="text-xs text-gray-400 flex items-center gap-1">
                                   <Clock className="h-3 w-3" />
                                   {new Date(note.createdAt).toLocaleDateString()}
@@ -90,7 +95,7 @@ const NotesSection = () => {
                               variant="outline"
                               size="sm"
                               onClick={() => handleView(note)}
-                              className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white group-hover:scale-105 transition-all"
+                              className="border-red-500 text-red-400 hover:bg-red-500 hover:text-white group-hover:scale-105 transition-all duration-300"
                             >
                               <Eye className="h-4 w-4 mr-2" />
                               View

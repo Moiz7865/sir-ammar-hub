@@ -1,4 +1,3 @@
-
 import { Octokit } from '@octokit/rest';
 
 export interface Note {
@@ -57,11 +56,14 @@ const getRawContentUrl = (filePath: string) => {
 const parseFileInfo = (path: string, sha: string): Note => {
   const pathParts = path.split('/');
   const fileName = pathParts[pathParts.length - 1];
-  const subject = pathParts[pathParts.length - 2] as 'islamiyat' | 'pakistan-studies';
+  const subject = pathParts[pathParts.length - 2] === 'pakistan-studies' ? 'pakistan-studies' : 'islamiyat';
+  
+  // Use the title from the filename (without extension) for display
+  const title = fileName.replace(/\.[^/.]+$/, "").split('-').join(' ').replace(/_/g, ' ');
   
   return {
     id: sha,
-    title: fileName.replace(/\.[^/.]+$/, ""), // Remove file extension
+    title: title,
     subject,
     fileName,
     filePath: `/${path}`,
