@@ -10,38 +10,88 @@ export interface Note {
   createdAt: string;
 }
 
-const NOTES_KEY = 'teaching_hub_notes';
-
-// GitHub configuration
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
 const REPO_OWNER = import.meta.env.VITE_REPO_OWNER;
 const REPO_NAME = import.meta.env.VITE_REPO_NAME;
 const BRANCH = 'main';
 
-const octokit = GITHUB_TOKEN ? new Octokit({ auth: GITHUB_TOKEN }) : null;
+const octokit = new Octokit({ auth: GITHUB_TOKEN });
 
 // Helper function to get raw content URL
 const getRawContentUrl = (filePath: string) => {
   return `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/${BRANCH}${filePath}`;
 };
 
+// Helper function to parse file path and extract note info
+const parseFileInfo = (path: string, sha: string): Note => {
+  const pathParts = path.split('/');
+  const fileName = pathParts[pathParts.length - 1];
+  const subject = pathParts[pathParts.length - 2] as 'islamiyat' | 'pakistan-studies';
+  
+  return {
+    id: sha,
+    title: fileName.replace(/\.[^/.]+$/, ""), // Remove file extension
+    subject,
+    fileName,
+    filePath: `/${path}`,
+    createdAt: new Date().toISOString()
+  };
+};
+
 export const notesService = {
-  getNotes: (): Note[] => {
-    const notes = localStorage.getItem(NOTES_KEY);
-    return notes ? JSON.parse(notes) : [];
+  getNotes: async (): Promise<Note[]> => {
+    try {
+      if (!GITHUB_TOKEN || !REPO_OWNER || !REPO_NAME) {
+        throw new Error('GitHub configuration is missing. Please check your environment variables.');
+      }
+
+      // Get all files in the public/notes directory
+      const response = await octokit.repos.getContent({
+        owner: REPO_OWNER,
+        repo: REPO_NAME,
+        path: 'public/notes',
+        ref: BRANCH,
+      });
+
+      if (!Array.isArray(response.data)) {
+        throw new Error('Invalid response from GitHub');
+      }
+
+      // Get contents of each subject directory
+      const notesPromises = response.data.map(async (subjectDir) => {
+        if (subjectDir.type !== 'dir') return [];
+
+        const files = await octokit.repos.getContent({
+          owner: REPO_OWNER,
+          repo: REPO_NAME,
+          path: subjectDir.path,
+          ref: BRANCH,
+        });
+
+        if (!Array.isArray(files.data)) return [];
+
+        return files.data.map(file => parseFileInfo(file.path, file.sha));
+      });
+
+      const notesArrays = await Promise.all(notesPromises);
+      return notesArrays.flat();
+    } catch (error: any) {
+      console.error('Failed to fetch notes:', error);
+      if (error.status === 404) {
+        throw new Error('Notes directory not found. Please check your repository structure.');
+      } else if (error.status === 401) {
+        throw new Error('Authentication failed. Please check your GitHub token.');
+      }
+      throw new Error('Failed to fetch notes. Please try again later.');
+    }
   },
 
   saveNote: async (note: Omit<Note, 'id' | 'createdAt' | 'filePath'> & { file: File }) => {
     try {
-      if (!octokit) {
-        throw new Error('GitHub token not configured. Please check your environment variables.');
+      if (!GITHUB_TOKEN || !REPO_OWNER || !REPO_NAME) {
+        throw new Error('GitHub configuration is missing. Please check your environment variables.');
       }
 
-      if (!REPO_OWNER || !REPO_NAME) {
-        throw new Error('GitHub repository details not configured. Please check your environment variables.');
-      }
-
-      const notes = notesService.getNotes();
       const filePath = `public/notes/${note.subject}/${note.fileName}`;
       
       // Convert file to base64
@@ -51,7 +101,7 @@ export const notesService = {
       );
 
       // Upload file to GitHub
-      await octokit.repos.createOrUpdateFileContents({
+      const response = await octokit.repos.createOrUpdateFileContents({
         owner: REPO_OWNER,
         repo: REPO_NAME,
         path: filePath,
@@ -60,95 +110,68 @@ export const notesService = {
         branch: BRANCH,
       });
 
-      const newNote: Note = {
-        ...note,
-        id: crypto.randomUUID(),
-        createdAt: new Date().toISOString(),
-        filePath: `/${filePath}`,
-      };
-
-      notes.push(newNote);
-      localStorage.setItem(NOTES_KEY, JSON.stringify(notes));
-      return newNote;
+      // Return the new note object
+      return parseFileInfo(filePath, response.data.content?.sha || '');
     } catch (error: any) {
-      console.error('Detailed error:', error);
+      console.error('Failed to save note:', error);
       if (error.status === 404) {
         throw new Error('Repository not found. Please check your repository settings.');
       } else if (error.status === 401) {
         throw new Error('Authentication failed. Please check your GitHub token.');
-      } else if (error.message) {
-        throw new Error(`GitHub Error: ${error.message}`);
-      } else {
-        throw new Error('Failed to upload note to GitHub. Please try again.');
       }
+      throw new Error('Failed to upload note to GitHub. Please try again.');
     }
   },
 
   deleteNote: async (id: string) => {
     try {
-      if (!octokit) {
-        throw new Error('GitHub token not configured. Please check your environment variables.');
+      if (!GITHUB_TOKEN || !REPO_OWNER || !REPO_NAME) {
+        throw new Error('GitHub configuration is missing. Please check your environment variables.');
       }
 
-      if (!REPO_OWNER || !REPO_NAME) {
-        throw new Error('GitHub repository details not configured. Please check your environment variables.');
-      }
-
-      const notes = notesService.getNotes();
-      const noteToDelete = notes.find(note => note.id === id);
+      // Get all notes to find the one to delete
+      const allNotes = await notesService.getNotes();
+      const noteToDelete = allNotes.find(note => note.id === id);
 
       if (!noteToDelete) {
         throw new Error('Note not found.');
       }
 
-      try {
-        // Get the current file's SHA
-        const { data: fileData } = await octokit.repos.getContent({
-          owner: REPO_OWNER,
-          repo: REPO_NAME,
-          path: noteToDelete.filePath.substring(1), // Remove leading slash
-          ref: BRANCH,
-        });
+      // Get the file's SHA
+      const { data: fileData } = await octokit.repos.getContent({
+        owner: REPO_OWNER,
+        repo: REPO_NAME,
+        path: noteToDelete.filePath.substring(1), // Remove leading slash
+        ref: BRANCH,
+      });
 
-        if ('sha' in fileData) {
-          // Delete file from GitHub
-          await octokit.repos.deleteFile({
-            owner: REPO_OWNER,
-            repo: REPO_NAME,
-            path: noteToDelete.filePath.substring(1),
-            message: `Delete note: ${noteToDelete.title}`,
-            sha: fileData.sha,
-            branch: BRANCH,
-          });
-        }
-      } catch (error: any) {
-        if (error.status === 404) {
-          console.warn('File not found in repository, proceeding with local deletion');
-        } else {
-          throw error;
-        }
+      if (!('sha' in fileData)) {
+        throw new Error('Could not get file information from GitHub.');
       }
 
-      const updatedNotes = notes.filter(note => note.id !== id);
-      localStorage.setItem(NOTES_KEY, JSON.stringify(updatedNotes));
+      // Delete file from GitHub
+      await octokit.repos.deleteFile({
+        owner: REPO_OWNER,
+        repo: REPO_NAME,
+        path: noteToDelete.filePath.substring(1),
+        message: `Delete note: ${noteToDelete.title}`,
+        sha: fileData.sha,
+        branch: BRANCH,
+      });
+
     } catch (error: any) {
-      console.error('Delete error:', error);
+      console.error('Failed to delete note:', error);
       if (error.status === 404) {
-        throw new Error('Repository or file not found. Please check your repository settings.');
+        throw new Error('Note not found. It may have been already deleted.');
       } else if (error.status === 401) {
         throw new Error('Authentication failed. Please check your GitHub token.');
-      } else if (error.message) {
-        throw new Error(`GitHub Error: ${error.message}`);
-      } else {
-        throw new Error('Failed to delete note from GitHub. Please try again.');
       }
+      throw new Error('Failed to delete note from GitHub. Please try again.');
     }
   },
 
   viewNote: (note: Note) => {
-    // Use raw content URL for PDF viewing
     const pdfUrl = getRawContentUrl(note.filePath);
-    // Open in new tab with our PDF viewer
     window.open(`/view-note?url=${encodeURIComponent(pdfUrl)}`, '_blank');
   },
 };
