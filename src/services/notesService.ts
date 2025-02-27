@@ -1,3 +1,4 @@
+
 import { Octokit } from '@octokit/rest';
 
 export interface Note {
@@ -10,7 +11,7 @@ export interface Note {
 }
 
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
-const REPO_OWNER = import.meta.env.VITE_REPO_NAME;
+const REPO_OWNER = import.meta.env.VITE_REPO_OWNER;
 const REPO_NAME = import.meta.env.VITE_REPO_NAME;
 const BRANCH = 'main';
 
