@@ -20,38 +20,26 @@
   }
 
   body {
-    @apply bg-background text-foreground font-['Inter'] antialiased;
-    background: linear-gradient(to bottom, #0f0f0f, #1a1a1a);
-    color: #fff;
+    @apply bg-background text-foreground font-['Inter'];
   }
 
-  /* Custom Utilities */
-  .glass-effect {
-    @apply backdrop-blur-lg bg-white/10 border border-white/20;
+  .glass-card {
+    @apply bg-black/40 backdrop-blur-sm border border-white/10 shadow-lg;
   }
 
-  .gradient-border {
-    @apply p-[1px] bg-gradient-to-r from-purple-600 to-pink-600 rounded-lg;
+  .animate-on-scroll {
+    @apply opacity-0 translate-y-8 transition-all duration-700;
   }
 
-  /* Animation Classes */
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
+  .animate-on-scroll.in-view {
+    @apply opacity-100 translate-y-0;
   }
 
-  @keyframes float {
-    0% {
-      transform: translateY(0px);
-    }
-    50% {
-      transform: translateY(-10px);
-    }
-    100% {
-      transform: translateY(0px);
-    }
+  .video-background {
+    @apply fixed inset-0 w-full h-full object-cover -z-10;
   }
 
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-pink-600;
+  .overlay {
+    @apply fixed inset-0 bg-black/60 -z-10;
   }
 }

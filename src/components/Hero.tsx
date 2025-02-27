@@ -1,8 +1,7 @@
 
-import { GraduationCap, Award, BookOpen, ArrowRight } from "lucide-react";
+import { GraduationCap, Award, BookOpen } from "lucide-react";
 import { Button } from "./ui/button";
 import { TypeAnimation } from 'react-type-animation';
-import { motion } from "framer-motion";
 
 const Hero = () => {
   const handleEnroll = () => {
@@ -10,155 +9,83 @@ const Hero = () => {
   };
 
   return (
-    <div className="relative min-h-screen overflow-hidden">
-      {/* Video Background */}
-      <div className="absolute inset-0 z-0">
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          className="w-full h-full object-cover"
-        >
-          <source src="/books-bg.mp4" type="video/mp4" />
-        </video>
-        <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" />
-      </div>
+    <div className="min-h-screen relative overflow-hidden text-white">
+      <video autoPlay muted loop className="video-background">
+        <source src="/books-bg.mp4" type="video/mp4" />
+      </video>
+      <div className="overlay" />
+      
+      <div className="container mx-auto px-4 py-20 flex flex-col lg:flex-row items-center justify-between gap-12 relative z-10">
+        <div className="w-full lg:w-1/2 space-y-6">
+          <span className="inline-block px-4 py-2 rounded-full bg-red-500/20 text-red-400 font-medium animate-fade-in">
+            O-Level Education Expert
+          </span>
 
-      {/* Content */}
-      <div className="relative z-10 container mx-auto px-4 py-16 min-h-screen flex flex-col justify-center">
-        <div className="grid md:grid-cols-2 gap-8 items-center">
-          {/* Left Side - Image */}
-          <motion.div
-            initial={{ opacity: 0, x: -50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="order-2 md:order-1"
-          >
-            <div className="relative">
-              <div className="absolute -inset-4 bg-red-600/20 rounded-full blur-2xl" />
-              <img
-                src="/sir-ammar.jpg"
-                alt="Sir Ammar Khan"
-                className="relative rounded-2xl w-full max-w-md mx-auto shadow-2xl border-2 border-red-500/20"
-              />
+        
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight animate-fade-up animate-slide-in [--tw-animate-delay:200ms]">
+  <span className="block animate-fade-up animate-slide-in [--tw-animate-delay:400ms] animate-pulse">
+    Master
+  </span>
+  <span className="text-red-400 block animate-fade-up animate-slide-in [--tw-animate-delay:600ms] animate-pulse">
+    Islamiyat & Pakistan Studies
+  </span>
+  <span className="block animate-fade-up animate-slide-in [--tw-animate-delay:800ms] animate-pulse">
+    with Sir Ammar Khan
+  </span>
+</h1>
+
+
+          <p className="text-lg text-gray-300 max-w-xl animate-fade-up [--tw-animate-delay:800ms]">
+            Dedicated O-Level teacher specializing in Islamiyat and Pakistan Studies, 
+            with over 8 years of experience helping students achieve excellence.
+          </p>
+          
+          <div className="flex flex-wrap gap-4">
+            <Button
+              size="lg"
+              onClick={handleEnroll}
+              className="bg-red-500 hover:bg-red-600 text-white transition-all"
+            >
+              Enroll Now
+            </Button>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={() => window.location.href = '/notes'}
+              className="border-red-500 text-red-400 hover:bg-red-500/10"
+            >
+              View Notes
+            </Button>
+          </div>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-12">
+            <div className="glass-card p-6 rounded-xl space-y-2">
+              <GraduationCap className="text-red-400 h-8 w-8" />
+              <h3 className="font-semibold">Experienced</h3>
+              <p className="text-sm text-gray-300">8+ years teaching</p>
             </div>
-          </motion.div>
-
-          {/* Right Side - Content */}
-          <motion.div
-            initial={{ opacity: 0, x: 50 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6 }}
-            className="order-1 md:order-2 text-center md:text-left space-y-6"
-          >
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              className="inline-block rounded-full px-4 py-1 bg-red-500/10 border border-red-500/20 text-red-300"
-            >
-              O-Level Education Expert
-            </motion.div>
-
-            <motion.h1
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              className="text-4xl md:text-6xl font-bold leading-tight"
-            >
-              Transform Your 
-              <br />
-              <TypeAnimation
-                sequence={[
-                  'Islamiyat',
-                  2000,
-                  'Pakistan Studies',
-                  2000,
-                ]}
-                wrapper="span"
-                speed={50}
-                className="text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-red-600"
-                repeat={Infinity}
-              />
-              <br />
-              Journey
-            </motion.h1>
-
-            <motion.p
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.5 }}
-              className="text-lg text-gray-300 max-w-xl"
-            >
-              Experience comprehensive O-Level education with personalized guidance 
-              and proven success strategies.
-            </motion.p>
-
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-              className="flex flex-wrap gap-4 justify-center md:justify-start pt-4"
-            >
-              <Button
-                size="lg"
-                onClick={handleEnroll}
-                className="bg-red-600 hover:bg-red-700 text-white font-semibold px-8"
-              >
-                Start Learning <ArrowRight className="ml-2" />
-              </Button>
-              <Button
-                size="lg"
-                variant="outline"
-                onClick={() => window.location.href = '/notes'}
-                className="border-red-500/30 text-red-300 hover:bg-red-950/30"
-              >
-                View Notes
-              </Button>
-            </motion.div>
-          </motion.div>
+            <div className="glass-card p-6 rounded-xl space-y-2">
+              <Award className="text-red-400 h-8 w-8" />
+              <h3 className="font-semibold">Certified</h3>
+              <p className="text-sm text-gray-300">O-Level Expert</p>
+            </div>
+            <div className="glass-card p-6 rounded-xl space-y-2">
+              <BookOpen className="text-red-400 h-8 w-8" />
+              <h3 className="font-semibold">Comprehensive</h3>
+              <p className="text-sm text-gray-300">Complete Notes</p>
+            </div>
+          </div>
         </div>
-
-        {/* Features */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-16"
-        >
-          {[
-            {
-              icon: GraduationCap,
-              title: "Expert Teaching",
-              desc: "8+ years experience"
-            },
-            {
-              icon: Award,
-              title: "Proven Results",
-              desc: "Excellence in O-Levels"
-            },
-            {
-              icon: BookOpen,
-              title: "Complete Notes",
-              desc: "Comprehensive material"
-            }
-          ].map((feature, i) => (
-            <motion.div
-              key={i}
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.8 + (i * 0.1) }}
-              className="group"
-            >
-              <div className="relative p-6 bg-black/40 backdrop-blur border border-red-500/10 rounded-xl hover:bg-red-950/20 transition duration-300">
-                <feature.icon className="h-8 w-8 text-red-400 mb-4" />
-                <h3 className="text-lg font-semibold text-white mb-2">{feature.title}</h3>
-                <p className="text-gray-400">{feature.desc}</p>
-              </div>
-            </motion.div>
-          ))}
-        </motion.div>
+        
+        <div className="w-full lg:w-1/2 relative animate-fade-in [--tw-animate-delay:1000ms]">
+          <div className="aspect-square relative rounded-2xl overflow-hidden glass-card">
+            <img
+              src="/sir-ammar.jpg"
+              alt="Sir Ammar Khan"
+              className="w-full h-full object-cover"
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
