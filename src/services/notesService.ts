@@ -1,4 +1,3 @@
-
 import { Octokit } from '@octokit/rest';
 
 export interface Note {
@@ -11,11 +10,42 @@ export interface Note {
 }
 
 const GITHUB_TOKEN = import.meta.env.VITE_GITHUB_TOKEN;
-const REPO_OWNER = import.meta.env.VITE_REPO_OWNER;
+const REPO_OWNER = import.meta.env.VITE_REPO_NAME;
 const REPO_NAME = import.meta.env.VITE_REPO_NAME;
 const BRANCH = 'main';
 
-const octokit = new Octokit({ auth: GITHUB_TOKEN });
+// Add token validation
+const validateGithubConfig = () => {
+  console.log('Checking GitHub configuration...');
+  console.log('Token exists:', !!GITHUB_TOKEN);
+  console.log('Repo Owner:', REPO_OWNER);
+  console.log('Repo Name:', REPO_NAME);
+
+  if (!GITHUB_TOKEN) {
+    throw new Error('GitHub token is missing. Please check VITE_GITHUB_TOKEN in your environment variables.');
+  }
+  if (!REPO_OWNER || !REPO_NAME) {
+    throw new Error('Repository configuration is missing. Please check VITE_REPO_OWNER and VITE_REPO_NAME.');
+  }
+};
+
+// Initialize Octokit with error handling
+const createOctokitInstance = () => {
+  validateGithubConfig();
+  console.log('Creating Octokit instance...');
+  return new Octokit({ 
+    auth: GITHUB_TOKEN,
+    log: {
+      debug: (message: string) => console.debug(message),
+      info: (message: string) => console.log(message),
+      warn: (message: string) => console.warn(message),
+      error: (message: string) => console.error(message)
+    }
+  });
+};
+
+// Create Octokit instance
+const octokit = createOctokitInstance();
 
 // Helper function to get raw content URL
 const getRawContentUrl = (filePath: string) => {
@@ -41,8 +71,16 @@ const parseFileInfo = (path: string, sha: string): Note => {
 export const notesService = {
   getNotes: async (): Promise<Note[]> => {
     try {
-      if (!GITHUB_TOKEN || !REPO_OWNER || !REPO_NAME) {
-        throw new Error('GitHub configuration is missing. Please check your environment variables.');
+      validateGithubConfig();
+      console.log('Fetching notes...');
+
+      // Test authentication first
+      try {
+        await octokit.rest.users.getAuthenticated();
+        console.log('GitHub authentication successful');
+      } catch (authError) {
+        console.error('GitHub authentication failed:', authError);
+        throw new Error('GitHub authentication failed. Please check if your token is valid and has the correct permissions.');
       }
 
       // Get all files in the public/notes directory
@@ -77,12 +115,18 @@ export const notesService = {
       return notesArrays.flat();
     } catch (error: any) {
       console.error('Failed to fetch notes:', error);
+      console.error('Error details:', {
+        status: error.status,
+        message: error.message,
+        response: error.response?.data
+      });
+
       if (error.status === 404) {
         throw new Error('Notes directory not found. Please check your repository structure.');
-      } else if (error.status === 401) {
-        throw new Error('Authentication failed. Please check your GitHub token.');
+      } else if (error.status === 401 || error.status === 403) {
+        throw new Error(`Authentication failed. Please check your GitHub token. Error: ${error.message}`);
       }
-      throw new Error('Failed to fetch notes. Please try again later.');
+      throw new Error(`Failed to fetch notes: ${error.message}`);
     }
   },
 
