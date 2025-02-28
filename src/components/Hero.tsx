@@ -31,6 +31,24 @@ const Hero = () => {
       <div className="absolute inset-0 bg-gradient-to-b from-black/90 via-black/70 to-black/90 z-10"></div>
       
       <div className="container mx-auto px-4 py-8 relative z-20">
+        {/* Mobile Profile Image - Visible only on small screens */}
+        <div className="block lg:hidden w-full mb-10">
+          <div className="relative w-48 h-48 mx-auto">
+            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-red-500 to-red-700 opacity-70 blur-xl"></div>
+            <div className="relative h-full w-full rounded-full border-4 border-red-500/50 overflow-hidden shadow-lg shadow-red-500/20 hover:scale-105 hover:border-red-400 transition-all duration-500">
+              <img
+                src="/sir-ammar.jpg"
+                alt="Sir Ammar Khan"
+                className="w-full h-full object-cover transition-transform duration-700 hover:scale-110"
+              />
+            </div>
+          </div>
+          <div className="text-center mt-4">
+            <h3 className="text-xl font-bold text-white">Sir Ammar Khan</h3>
+            <p className="text-red-400 text-sm">O-Level Education Specialist</p>
+          </div>
+        </div>
+
         <div className="flex flex-col items-center lg:items-start lg:mt-16">
           
           {/* Header Tag */}
@@ -93,9 +111,9 @@ const Hero = () => {
               </div>
             </div>
             
-            {/* Right Column - Profile Image with 3D Card Effect */}
-            <div className={`relative flex justify-center ${isInView ? 'animate-fade-in' : 'opacity-0'}`} style={{animationDelay: '500ms'}}>
-              <div className="perspective-card-container w-full max-w-md aspect-[4/5] relative group">
+            {/* Desktop Profile Image - Visible only on large screens */}
+            <div className={`hidden lg:block ${isInView ? 'animate-fade-in' : 'opacity-0'}`} style={{animationDelay: '500ms'}}>
+              <div className="perspective-card-container w-full max-w-md aspect-[4/5] relative group mx-auto">
                 <div className="relative w-full h-full rounded-2xl bg-gradient-to-br from-red-800 to-red-950 p-1 transform transition-all duration-500 hover:scale-[1.02] hover:rotate-2 shadow-xl hover:shadow-red-500/30 perspective-card group">
                   
                   {/* Profile Image */}
@@ -172,8 +190,7 @@ const Hero = () => {
         </div>
       </div>
       
-      {/* Add custom perspective effect with CSS */}
-      <style jsx>{`
+      <style dangerouslySetInnerHTML={{ __html: `
         .perspective-card-container {
           perspective: 1000px;
         }
@@ -198,7 +215,7 @@ const Hero = () => {
         .animate-float {
           animation: float 6s ease-in-out infinite;
         }
-      `}</style>
+      `}} />
     </div>
   );
 };
